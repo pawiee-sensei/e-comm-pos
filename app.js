@@ -63,8 +63,13 @@ app.set('views', path.join(__dirname, 'views'));
 const authRoutes = require('./routes/auth.routes');
 const adminRoutes = require('./routes/admin.routes');
 
+
 app.use('/', authRoutes);
 app.use('/', adminRoutes);
+
+const adminProductRoutes = require('./routes/admin.products.routes');
+app.use('/', adminProductRoutes);
+
 
 /* =========================
    SERVER
