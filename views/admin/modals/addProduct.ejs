@@ -4,14 +4,19 @@
   tabindex="-1"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
 
       <!-- =========================
-           MODAL HEADER
+           HEADER
       ========================= -->
-      <div class="modal-header">
-        <h5 class="modal-title">Add New Product</h5>
+      <div class="modal-header border-bottom">
+        <div>
+          <h5 class="modal-title mb-0">Add New Product</h5>
+          <small class="text-muted">
+            Create a new product and set its initial inventory
+          </small>
+        </div>
         <button
           type="button"
           class="btn-close"
@@ -21,118 +26,118 @@
       </div>
 
       <!-- =========================
-           MODAL BODY
+           BODY
       ========================= -->
-      <form
-        id="add-product-form"
-        enctype="multipart/form-data"
-      >
+      <form id="add-product-form" enctype="multipart/form-data">
         <div class="modal-body">
-          <div class="row g-3">
 
-            <!-- Product Name -->
-            <div class="col-md-6">
-              <label class="form-label">Product Name</label>
-              <input
-                type="text"
-                name="name"
-                class="form-control"
-                required
-              >
-            </div>
+          <!-- ===== BASIC INFO ===== -->
+          <div class="mb-4">
+            <h6 class="fw-semibold mb-3">Basic Information</h6>
 
-            <!-- SKU -->
-            <div class="col-md-6">
-              <label class="form-label">SKU</label>
-              <input
-                type="text"
-                name="sku"
-                class="form-control"
-                placeholder="Optional"
-              >
-            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Product Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  placeholder="e.g. Burger Steak"
+                  required
+                >
+              </div>
 
-            <!-- Category (future-ready) -->
-            <div class="col-md-6">
-              <label class="form-label">Category</label>
-              <select
-                name="category_id"
-                class="form-select"
-              >
-                <option value="">Select Category</option>
-                <!-- Categories can be injected later -->
-              </select>
-            </div>
+              <div class="col-md-6">
+                <label class="form-label">Category</label>
+                <select
+                  name="category_id"
+                  class="form-select"
+                >
+                  <option value="">Select category</option>
+                </select>
+              </div>
 
-            <!-- Initial Stock -->
-            <div class="col-md-6">
-              <label class="form-label">Initial Stock</label>
-              <input
-                type="number"
-                name="stock"
-                class="form-control"
-                min="0"
-                value="0"
-              >
-            </div>
-
-            <!-- Price -->
-            <div class="col-md-6">
-              <label class="form-label">Selling Price</label>
-              <input
-                type="number"
-                name="price"
-                class="form-control"
-                min="0"
-                step="0.01"
-                required
-              >
-            </div>
-
-            <!-- Cost (optional – safe to ignore if column missing) -->
-            <div class="col-md-6">
-              <label class="form-label">Cost</label>
-              <input
-                type="number"
-                name="cost"
-                class="form-control"
-                min="0"
-                step="0.01"
-                placeholder="Optional"
-              >
-            </div>
-
-            <!-- Description -->
-            <div class="col-12">
-              <label class="form-label">Description</label>
-              <textarea
-                name="description"
-                class="form-control"
-                rows="3"
-              ></textarea>
-            </div>
-
-            <!-- Image Upload -->
-            <div class="col-12">
-              <label class="form-label">Product Image</label>
-              <input
-                type="file"
-                name="image"
-                class="form-control"
-                accept="image/*"
-              >
-              <div class="form-text">
-                Optional. JPG / PNG recommended.
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea
+                  name="description"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Short product description (optional)"
+                ></textarea>
               </div>
             </div>
-
           </div>
+
+          <!-- ===== PRICING & STOCK ===== -->
+          <div class="mb-4">
+            <h6 class="fw-semibold mb-3">Pricing & Inventory</h6>
+
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Selling Price</label>
+                <input
+                  type="number"
+                  name="price"
+                  class="form-control"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                >
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Cost</label>
+                <input
+                  type="number"
+                  name="cost"
+                  class="form-control"
+                  min="0"
+                  step="0.01"
+                  placeholder="Optional"
+                >
+               
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Initial Stock</label>
+                <input
+                  type="number"
+                  name="stock"
+                  class="form-control"
+                  min="0"
+                  value="0"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== IMAGE ===== -->
+          <div>
+            <h6 class="fw-semibold mb-3">Product Image</h6>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <input
+                  type="file"
+                  name="image"
+                  class="form-control"
+                  accept="image/*"
+                >
+                <div class="form-text">
+                  Optional. JPG or PNG recommended. Used in product listings.
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- =========================
-             MODAL FOOTER
+             FOOTER
         ========================= -->
-        <div class="modal-footer">
+        <div class="modal-footer border-top">
           <button
             type="button"
             class="btn btn-outline-secondary"

@@ -68,13 +68,14 @@ module.exports = {
   },
 
   async create(data) {
-    const sql = `
-      INSERT INTO ${TABLE}
-      (uuid, name, sku, description, price, category_id, image, stock)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 0)
-    `;
-    await db.execute(sql, data);
-  },
+  const sql = `
+    INSERT INTO ${TABLE}
+    (uuid, name, sku, description, price, category_id, image, stock)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  await db.execute(sql, data);
+}
+,
 
   async update(id, data) {
     const sql = `
