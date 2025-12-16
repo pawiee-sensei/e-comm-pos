@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const express = require('express');
 const session = require('express-session');
 const helmet = require('helmet');
@@ -7,7 +8,9 @@ const path = require('path');
 
 const app = express();
 
-/* Helmet + CSP (STABLE BASELINE) */
+/* =========================
+   HELMET + CSP (STABLE)
+   ========================= */
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -21,11 +24,16 @@ app.use(
   })
 );
 
+/* =========================
+   CORE MIDDLEWARE
+   ========================= */
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-/* Sessions */
+/* =========================
+   SESSION CONFIG
+   ========================= */
 app.use(
   session({
     name: 'ecom.sid',
@@ -35,14 +43,32 @@ app.use(
   })
 );
 
-/* Views */
+/* =========================
+   STATIC FILES
+   Required for:
+   /public/js/*
+   /public/css/*
+   ========================= */
+app.use(express.static(path.join(__dirname, 'public')));
+
+/* =========================
+   VIEW ENGINE
+   ========================= */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-/* Routes */
+/* =========================
+   ROUTES
+   ========================= */
 const authRoutes = require('./routes/auth.routes');
-app.use('/', authRoutes);
+const adminRoutes = require('./routes/admin.routes');
 
+app.use('/', authRoutes);
+app.use('/', adminRoutes);
+
+/* =========================
+   SERVER
+   ========================= */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

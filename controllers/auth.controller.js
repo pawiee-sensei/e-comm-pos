@@ -24,8 +24,13 @@ async function login(req, res) {
     role: user.role
   };
 
+  if (user.role === 'admin') {
+    return res.redirect('/admin');
+  }
+
   return res.redirect('/');
 }
+
 
 function logout(req, res) {
   req.session.destroy(() => {
