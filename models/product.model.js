@@ -68,27 +68,49 @@ module.exports = {
   },
 
   async create(data) {
-  const sql = `
-    INSERT INTO ${TABLE}
-    (uuid, name, sku, description, price, category_id, image, stock)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-  await db.execute(sql, data);
-}
-,
-
-  async update(id, data) {
     const sql = `
-      UPDATE ${TABLE}
-      SET name=?, description=?, price=?, category_id=?, image=?
-      WHERE id=?
+      INSERT INTO ${TABLE}
+      (uuid, name, sku, description, price, category_id, image, stock)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    await db.execute(sql, [...data, id]);
+    await db.execute(sql, data);
+  },
+
+  /* =========================
+     UPDATE PRODUCT (SAFE IMAGE)
+  ========================= */
+  async update(id, data) {
+    let sql = `
+      UPDATE ${TABLE}
+      SET
+        name = ?,
+        description = ?,
+        price = ?,
+        category_id = ?
+    `;
+    const params = [
+      data.name,
+      data.description,
+      data.price,
+      data.category_id
+    ];
+
+    // ✅ ONLY update image if a new one exists
+    if (data.image !== undefined) {
+      sql += `, image = ?`;
+      params.push(data.image);
+    }
+
+    sql += ` WHERE id = ? LIMIT 1`;
+    params.push(id);
+
+    const [result] = await db.execute(sql, params);
+    return result.affectedRows;
   },
 
   async remove(id) {
     await db.execute(
-      `DELETE FROM ${TABLE} WHERE id = ?`,
+      `DELETE FROM ${TABLE} WHERE id = ? LIMIT 1`,
       [id]
     );
   }

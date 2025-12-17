@@ -361,3 +361,20 @@ body {
   border-right: 2px solid currentColor;
   transform: rotate(45deg);
 }
+.modal {
+  z-index: 2000;
+}
+
+.modal-backdrop {
+  z-index: 1999;
+}
+
+.admin-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.modal-body-scroll {
+  max-height: 65vh;
+  overflow-y: auto;
+}

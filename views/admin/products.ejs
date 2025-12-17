@@ -1,39 +1,217 @@
-<div class="products-container">
+<%- include('../layouts/admin-layout') %>
 
-  <div class="d-flex justify-content-between mb-3">
-    <h3>Products</h3>
+  <!-- =========================
+       HEADER
+  ========================= -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="mb-0">Products</h3>
+      <small class="text-muted">Manage product catalog and stock</small>
+    </div>
 
-    <!-- ADD PRODUCT BUTTON (BOOTSTRAP MODAL TRIGGER) -->
-    <button
-      class="btn btn-primary btn-sm"
-      data-bs-toggle="modal"
-      data-bs-target="#addProductModal"
-    >
+    <button class="btn btn-primary btn-sm" id="btn-add-product">
       + Add Product
     </button>
   </div>
 
-  <table class="table table-sm table-hover">
-    <thead class="table-light">
-      <tr>
-        <th>Image</th>
-        <th>Product</th>
-        <th>Stock</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="products-body">
-      <tr>
-        <td colspan="5" class="text-center text-muted py-4">
-          Loading…
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- =========================
+       PRODUCTS TABLE
+  ========================= -->
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:60px">Image</th>
+            <th>Product</th>
+            <th style="width:80px">Stock</th>
+            <th style="width:90px">Status</th>
+            <th style="width:140px">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="products-body">
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              Loading products…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================================================
+     ADD PRODUCT MODAL
+====================================================== -->
+<div class="modal fade" id="addProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <form id="add-product-form" class="modal-content" enctype="multipart/form-data">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Product</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label">Product Name</label>
+            <input class="form-control" name="name" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Selling Price</label>
+            <input
+              class="form-control"
+              name="price"
+              type="number"
+              step="0.01"
+              min="0"
+              required
+            >
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Initial Stock</label>
+            <input
+              class="form-control"
+              name="stock"
+              type="number"
+              min="0"
+              value="0"
+            >
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Product Image</label>
+            <input class="form-control" type="file" name="image">
+            <div class="form-text">Optional. JPG / PNG recommended.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button class="btn btn-primary" type="submit">
+          Save Product
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
 
-<!-- MODALS -->
-<%- include('./modals/addProduct') %>
-<%- include('./modals/editProduct') %>
-<%- include('./modals/deleteConfirm') %>
+<!-- ======================================================
+     EDIT PRODUCT MODAL  ✅ REQUIRED FOR EDIT BUTTON
+====================================================== -->
+<div class="modal fade" id="editProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <form id="edit-product-form" class="modal-content" enctype="multipart/form-data">
+
+      <!-- IMPORTANT: REQUIRED -->
+      <input type="hidden" name="id">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Product</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label">Product Name</label>
+            <input class="form-control" name="name" required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">SKU</label>
+            <input class="form-control" name="sku" readonly>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Selling Price</label>
+            <input
+              class="form-control"
+              name="price"
+              type="number"
+              step="0.01"
+              min="0"
+              required
+            >
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Stock</label>
+            <input class="form-control" name="stock" readonly>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Product Image</label>
+            <input class="form-control" type="file" name="image">
+            <img
+              id="edit-product-preview"
+              src="/uploads/no-image.png"
+              class="mt-2 border rounded"
+              style="max-height:120px"
+            >
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button class="btn btn-primary" type="submit">
+          Save Changes
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ======================================================
+     DELETE CONFIRM MODAL
+====================================================== -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-body text-center">
+        <p class="mb-3">Delete this product?</p>
+
+        <input type="hidden" id="delete-product-id">
+
+        <div class="d-flex justify-content-center gap-2">
+          <button class="btn btn-danger btn-sm" id="btn-confirm-delete">
+            Delete
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+` }) %>

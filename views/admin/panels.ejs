@@ -1,24 +1,63 @@
+<!-- =========================
+     DASHBOARD PANEL
+========================= -->
 <section id="dashboard-panel" class="admin-panel active">
-  <h2 class="mb-3">Dashboard</h2>
-  <p class="text-muted">Overview and widgets will go here in future phases.</p>
+  <h3>Dashboard</h3>
+  <p class="text-muted">Overview</p>
 </section>
 
+<!-- =========================
+     PRODUCTS PANEL
+========================= -->
 <section id="products-panel" class="admin-panel">
-  <%- include('./products') %>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="mb-0">Products</h3>
+      <small class="text-muted">Manage product catalog and stock</small>
+    </div>
+
+    <button class="btn btn-primary btn-sm" id="btn-add-product">
+      + Add Product
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th width="60">Image</th>
+            <th>Product</th>
+            <th width="80">Stock</th>
+            <th width="90">Status</th>
+            <th width="140">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="products-body">
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              Loading products…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </section>
 
+<!-- =========================
+     ADD PRODUCT MODAL
+========================= -->
+<%- include('./modals/addProduct') %>
 
-<section id="pos-panel" class="admin-panel">
-  <h2 class="mb-3">POS</h2>
-  <p class="text-muted">
-    POS functionality will be implemented in Phase 4.
-  </p>
-</section>
+<!-- =========================
+     EDIT PRODUCT MODAL
+========================= -->
+<%- include('./modals/editProduct') %>
 
-<section id="strategy-panel" class="admin-panel">
-  <h2 class="mb-3">Strategy Engine</h2>
-  <p class="text-muted">
-    Strategy engine will be enabled in Phase 7 using real metrics only.
-  </p>
-</section>
-
+<!-- =========================
+     DELETE CONFIRM MODAL
+========================= -->
+<%- include('./modals/deleteConfirm') %>
