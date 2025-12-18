@@ -20,12 +20,16 @@
   <div class="container d-flex justify-content-between align-items-center py-3">
     <h4 class="mb-0">Coffee Shop</h4>
 
-    <input
-      type="text"
-      class="form-control shop-search"
-      placeholder="Search products…"
-      disabled
-    >
+    <form method="GET" action="/shop" class="shop-search-form">
+  <input
+    type="text"
+    name="q"
+    class="form-control shop-search"
+    placeholder="Search coffee, drinks, pastry…"
+    value="<%= q || '' %>"
+  >
+</form>
+
 
     <div class="shop-actions">
       <span class="cart-icon">🛒</span>
@@ -44,13 +48,28 @@
 
 <!-- CATEGORY TABS -->
 <section class="shop-categories">
-  <div class="container d-flex gap-3">
-    <button class="btn btn-light active">All</button>
-    <button class="btn btn-light">Coffee</button>
-    <button class="btn btn-light">Drinks</button>
-    <button class="btn btn-light">Pastry</button>
+  <div class="container d-flex gap-2 flex-wrap">
+
+    <!-- ALL -->
+    <a
+      href="/shop<%= q ? `?q=${encodeURIComponent(q)}` : '' %>"
+      class="btn btn-light <%= !activeCategory ? 'active' : '' %>"
+    >
+      All
+    </a>
+
+    <% categories.forEach(c => { %>
+      <a
+        href="/shop?category=<%= c.id %><%= q ? `&q=${encodeURIComponent(q)}` : '' %>"
+        class="btn btn-light <%= String(activeCategory) === String(c.id) ? 'active' : '' %>"
+      >
+        <%= c.name %>
+      </a>
+    <% }) %>
+
   </div>
 </section>
+
 
 <!-- PRODUCTS -->
 <section class="shop-products">
