@@ -1,0 +1,15 @@
+<div class="product-card">
+  <img
+    src="/uploads/<%= p.image || 'no-image.png' %>"
+    alt="<%= p.name %>"
+  >
+
+  <div class="product-body">
+    <h6><%= p.name %></h6>
+    <p class="price">₱ <%= p.price %></p>
+
+    <button class="btn btn-outline-dark btn-sm" disabled>
+      Add to Cart
+    </button>
+  </div>
+</div>
