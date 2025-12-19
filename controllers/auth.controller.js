@@ -18,19 +18,25 @@ async function login(req, res) {
     return res.render('auth/login', { error: 'Invalid credentials' });
   }
 
+  // Save user session
   req.session.user = {
     id: user.id,
     name: user.name,
     role: user.role
   };
 
+  // ✅ Redirect-back logic (SAFE)
+  const redirectAfterLogin = req.session.redirectAfterLogin;
+  delete req.session.redirectAfterLogin;
+
+  // Admin always goes to admin
   if (user.role === 'admin') {
     return res.redirect('/admin');
   }
 
-  return res.redirect('/');
+  // User goes back to intended page OR fallback
+  return res.redirect(redirectAfterLogin || '/shop');
 }
-
 
 function logout(req, res) {
   req.session.destroy(() => {

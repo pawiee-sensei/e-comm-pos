@@ -1,5 +1,7 @@
 function ensureAuthenticated(req, res, next) {
   if (!req.session.user) {
+    // Save intended destination for user-side pages
+    req.session.redirectAfterLogin = req.originalUrl;
     return res.redirect('/login');
   }
   next();

@@ -49,3 +49,24 @@ exports.checkout = (req, res) => {
     session: req.session
   });
 };
+/* =========================
+   UPDATE CART QUANTITIES
+========================= */
+exports.updateCart = (req, res) => {
+  // Cart stored as object
+  const cartObj = req.session.cart || {};
+  const qtyMap = req.body.qty || {};
+
+  Object.keys(qtyMap).forEach(productId => {
+    if (cartObj[productId]) {
+      const qty = parseInt(qtyMap[productId], 10);
+
+      // Enforce minimum quantity = 1
+      cartObj[productId].qty = isNaN(qty) || qty < 1 ? 1 : qty;
+    }
+  });
+
+  req.session.cart = cartObj;
+
+  res.redirect('/shop/checkout');
+};
