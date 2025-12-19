@@ -1,4 +1,5 @@
 const Product = require('../models/product.model');
+const Category = require('../models/category.model');
 const { v4: uuid } = require('uuid');
 const { generateSKU } = require('../utils/sku.util');
 
@@ -12,20 +13,14 @@ exports.renderPanel = (req, res) => {
 };
 
 /* =========================
-   LIST PRODUCTS (API)
+   LIST PRODUCTS
 ========================= */
 exports.list = async (req, res) => {
   const { search = '', page = 1 } = req.query;
-
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const items = await Product.getAll({
-    search,
-    limit,
-    offset
-  });
-
+  const items = await Product.getAll({ search, limit, offset });
   const total = await Product.countAll({ search });
 
   res.json({
@@ -41,12 +36,18 @@ exports.list = async (req, res) => {
 ========================= */
 exports.getOne = async (req, res) => {
   const product = await Product.findById(req.params.id);
-
   if (!product) {
     return res.status(404).json({ error: 'Product not found' });
   }
-
   res.json(product);
+};
+
+/* =========================
+   LIST CATEGORIES ✅ REQUIRED
+========================= */
+exports.listCategories = async (req, res) => {
+  const categories = await Category.getAll();
+  res.json(categories);
 };
 
 /* =========================
@@ -55,42 +56,37 @@ exports.getOne = async (req, res) => {
 exports.create = async (req, res) => {
   const { name, price, description, category_id, stock } = req.body;
 
-  const sku = generateSKU();
-  const initialStock = Number.isInteger(Number(stock)) ? Number(stock) : 0;
-
   await Product.create([
     uuid(),
     name,
-    sku,
+    generateSKU(),
     description,
     price,
     category_id || null,
     req.file ? req.file.filename : null,
-    initialStock
+    Number(stock) || 0
   ]);
 
   res.json({ success: true });
 };
 
 /* =========================
-   UPDATE PRODUCT (FIXED)
+   UPDATE PRODUCT (FINAL)
 ========================= */
 exports.update = async (req, res) => {
   const { id } = req.params;
   const { name, price, description, category_id } = req.body;
 
-  const affected = await Product.update(id, {
+  const affected = await Product.update(id, [
     name,
     description,
     price,
-    category_id: category_id || null,
-    image: req.file ? req.file.filename : undefined // 🔑 KEY FIX
-  });
+    category_id || null,
+    req.file ? req.file.filename : null
+  ]);
 
   if (!affected) {
-    return res.status(400).json({
-      error: 'Update failed or no changes applied'
-    });
+    return res.status(400).json({ error: 'No changes applied' });
   }
 
   res.json({ success: true });

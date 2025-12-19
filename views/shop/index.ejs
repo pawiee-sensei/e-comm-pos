@@ -32,7 +32,15 @@
 
 
     <div class="shop-actions">
-      <span class="cart-icon">🛒</span>
+      <a href="/cart" class="cart-icon position-relative">
+  🛒
+  <% if (session?.cart) { %>
+    <span class="badge bg-dark position-absolute top-0 start-100 translate-middle">
+      <%= Object.keys(session.cart).length %>
+    </span>
+  <% } %>
+</a>
+
       <a href="/login" class="btn btn-outline-dark btn-sm">Login</a>
     </div>
   </div>
@@ -50,25 +58,23 @@
 <section class="shop-categories">
   <div class="container d-flex gap-2 flex-wrap">
 
-    <!-- ALL -->
     <a
-      href="/shop<%= q ? `?q=${encodeURIComponent(q)}` : '' %>"
-      class="btn btn-light <%= !activeCategory ? 'active' : '' %>"
-    >
+      href="/shop"
+      class="btn btn-sm <%= !activeCategory ? 'btn-dark' : 'btn-light' %>">
       All
     </a>
 
     <% categories.forEach(c => { %>
       <a
-        href="/shop?category=<%= c.id %><%= q ? `&q=${encodeURIComponent(q)}` : '' %>"
-        class="btn btn-light <%= String(activeCategory) === String(c.id) ? 'active' : '' %>"
-      >
+        href="/shop?category=<%= c.id %>"
+        class="btn btn-sm <%= String(activeCategory) === String(c.id) ? 'btn-dark' : 'btn-light' %>">
         <%= c.name %>
       </a>
     <% }) %>
 
   </div>
 </section>
+
 
 
 <!-- PRODUCTS -->

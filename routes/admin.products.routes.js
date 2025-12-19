@@ -4,12 +4,12 @@ const { ensureAdmin } = require('../middleware/auth.middleware');
 const upload = require('../middleware/upload');
 
 /* =========================
-   ADMIN PRODUCT PAGES
+   ADMIN PRODUCT PAGE
 ========================= */
 router.get('/admin/products', ensureAdmin, ctrl.renderPanel);
 
 /* =========================
-   ADMIN PRODUCT API
+   PRODUCT API
 ========================= */
 router.get('/admin/api/products', ensureAdmin, ctrl.list);
 router.get('/admin/api/products/:id', ensureAdmin, ctrl.getOne);
@@ -32,6 +32,15 @@ router.delete(
   '/admin/api/products/:id',
   ensureAdmin,
   ctrl.remove
+);
+
+/* =========================
+   CATEGORY API ✅ REQUIRED
+========================= */
+router.get(
+  '/admin/api/categories',
+  ensureAdmin,
+  ctrl.listCategories
 );
 
 module.exports = router;

@@ -5,8 +5,6 @@ exports.index = async (req, res) => {
   const q = (req.query.q || '').trim();
   const category = req.query.category || null;
 
-  const categories = await Category.getAll();
-
   const products = await Product.getAll({
     search: q,
     category,
@@ -14,11 +12,15 @@ exports.index = async (req, res) => {
     offset: 0
   });
 
+  const categories = await Category.getAll();
+
   res.render('shop/index', {
-    title: 'Shop',
-    products,
-    categories,
-    q,
-    activeCategory: category
-  });
+  title: 'Shop',
+  products,
+  categories,
+  q,
+  activeCategory: category,
+  session: req.session
+});
+
 };

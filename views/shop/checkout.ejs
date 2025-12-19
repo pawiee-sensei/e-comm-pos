@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/shop.css">
+</head>
+<body>
+
+<%- include('./partials/header', { session }) %>
+
+<section class="container py-5">
+  <h4 class="mb-4">Checkout</h4>
+
+  <div class="row g-4">
+
+    <!-- CUSTOMER INFO -->
+    <div class="col-md-7">
+      <div class="card p-4">
+        <h6 class="mb-3">Customer Information</h6>
+
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Phone</label>
+          <input class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Address</label>
+          <textarea class="form-control" rows="3"></textarea>
+        </div>
+
+        <button class="btn btn-dark w-100" disabled>
+          Place Order (Phase 4)
+        </button>
+      </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div class="col-md-5">
+      <div class="card p-4">
+        <h6 class="mb-3">Order Summary</h6>
+
+        <% items.forEach(i => { %>
+          <div class="d-flex justify-content-between mb-2">
+            <span><%= i.name %> × <%= i.qty %></span>
+            <span>₱<%= i.price * i.qty %></span>
+          </div>
+        <% }) %>
+
+        <hr>
+
+        <div class="d-flex justify-content-between fw-bold">
+          <span>Total</span>
+          <span>₱<%= total %></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

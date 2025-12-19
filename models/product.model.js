@@ -22,19 +22,7 @@ module.exports = {
       params.push(category);
     }
 
-    if (sort) {
-      const map = {
-        price_asc: 'p.price ASC',
-        price_desc: 'p.price DESC',
-        stock_asc: 'p.stock ASC',
-        stock_desc: 'p.stock DESC'
-      };
-      if (map[sort]) sql += ` ORDER BY ${map[sort]}`;
-    } else {
-      sql += ' ORDER BY p.created_at DESC';
-    }
-
-    sql += ' LIMIT ? OFFSET ?';
+    sql += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
     params.push(limit, offset);
 
     const [rows] = await db.execute(sql, params);
@@ -76,36 +64,21 @@ module.exports = {
     await db.execute(sql, data);
   },
 
-  /* =========================
-     UPDATE PRODUCT (SAFE IMAGE)
-  ========================= */
   async update(id, data) {
-    let sql = `
+    const sql = `
       UPDATE ${TABLE}
       SET
         name = ?,
         description = ?,
         price = ?,
-        category_id = ?
+        category_id = ?,
+        image = COALESCE(?, image)
+      WHERE id = ?
+      LIMIT 1
     `;
-    const params = [
-      data.name,
-      data.description,
-      data.price,
-      data.category_id
-    ];
 
-    // ✅ ONLY update image if a new one exists
-    if (data.image !== undefined) {
-      sql += `, image = ?`;
-      params.push(data.image);
-    }
-
-    sql += ` WHERE id = ? LIMIT 1`;
-    params.push(id);
-
-    const [result] = await db.execute(sql, params);
-    return result.affectedRows;
+    const [res] = await db.execute(sql, [...data, id]);
+    return res.affectedRows;
   },
 
   async remove(id) {

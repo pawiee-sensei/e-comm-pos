@@ -74,6 +74,11 @@ app.use('/', adminProductRoutes);
 const shopRoutes = require('./routes/shop.routes');
 app.use('/', shopRoutes);
 
+const adminCategoryRoutes = require('./routes/admin.categories.routes');
+app.use('/', adminCategoryRoutes);
+
+const cartRoutes = require('./routes/cart.routes');
+app.use('/', cartRoutes);
 /* =========================
    SERVER
    ========================= */

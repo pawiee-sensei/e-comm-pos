@@ -1,5 +1,5 @@
 /* ======================================================
-   PRODUCTS PANEL — ADMIN (STABLE)
+   PRODUCTS PANEL — ADMIN (STABLE + CATEGORY READY)
 ====================================================== */
 
 /* =========================
@@ -8,6 +8,30 @@
 function getModal(id) {
   const el = document.getElementById(id);
   return el ? bootstrap.Modal.getOrCreateInstance(el) : null;
+}
+
+/* =========================
+   CATEGORY HELPER (SAFE)
+========================= */
+async function loadCategories(selectEl, selectedId = null) {
+  if (!selectEl) return;
+
+  const res = await fetch('/admin/api/categories');
+  if (!res.ok) {
+    selectEl.innerHTML = `<option value="">Uncategorized</option>`;
+    return;
+  }
+
+  const categories = await res.json();
+  selectEl.innerHTML = `<option value="">Uncategorized</option>`;
+
+  categories.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name;
+    if (String(c.id) === String(selectedId)) opt.selected = true;
+    selectEl.appendChild(opt);
+  });
 }
 
 /* =========================
@@ -76,14 +100,18 @@ async function openEditModal(id) {
 
   const img = document.getElementById('edit-product-preview');
   if (img) {
-    img.src = p.image
-      ? `/uploads/${p.image}`
-      : '/uploads/no-image.png';
+    img.src = p.image ? `/uploads/${p.image}` : '/uploads/no-image.png';
   }
 
-  // IMPORTANT: reset file input so it doesn't carry old state
+  // Reset file input (prevents phantom uploads)
   const fileInput = form.querySelector('input[name="image"]');
   if (fileInput) fileInput.value = '';
+
+  // Load categories (SAFE)
+  loadCategories(
+    form.querySelector('select[name="category_id"]'),
+    p.category_id
+  );
 
   getModal('editProductModal').show();
 }
@@ -110,6 +138,8 @@ async function confirmDelete() {
 ========================= */
 document.addEventListener('click', e => {
   if (e.target.id === 'btn-add-product') {
+    const form = document.getElementById('add-product-form');
+    loadCategories(form?.querySelector('select[name="category_id"]'));
     getModal('addProductModal').show();
   }
 
@@ -118,8 +148,7 @@ document.addEventListener('click', e => {
   }
 
   if (e.target.classList.contains('btn-delete')) {
-    document.getElementById('delete-product-id').value =
-      e.target.dataset.id;
+    document.getElementById('delete-product-id').value = e.target.dataset.id;
     getModal('deleteConfirmModal').show();
   }
 
@@ -149,7 +178,7 @@ document
   });
 
 /* =========================
-   EDIT PRODUCT SUBMIT (FINAL FIX)
+   EDIT PRODUCT SUBMIT (FINAL + IMAGE SAFE)
 ========================= */
 document
   .getElementById('edit-product-form')
@@ -161,11 +190,8 @@ document
     const id = formData.get('id');
 
     const imageInput = form.querySelector('input[name="image"]');
-
-    // 🔑 CRITICAL FIX:
-    // If no new image selected, do NOT send image field
     if (!imageInput.files || imageInput.files.length === 0) {
-      formData.delete('image');
+      formData.delete('image'); // 🔑 KEEP OLD IMAGE
     }
 
     const res = await fetch(`/admin/api/products/${id}`, {
@@ -180,7 +206,7 @@ document
   });
 
 /* =========================
-   IMAGE PREVIEW (OPTIONAL BUT RECOMMENDED)
+   IMAGE PREVIEW (SAFE)
 ========================= */
 document.addEventListener('change', e => {
   if (e.target.name === 'image') {
@@ -188,9 +214,7 @@ document.addEventListener('change', e => {
     if (!file) return;
 
     const preview = document.getElementById('edit-product-preview');
-    if (preview) {
-      preview.src = URL.createObjectURL(file);
-    }
+    if (preview) preview.src = URL.createObjectURL(file);
   }
 });
 

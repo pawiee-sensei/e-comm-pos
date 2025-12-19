@@ -8,8 +8,13 @@
     <h6><%= p.name %></h6>
     <p class="price">₱ <%= p.price %></p>
 
-    <button class="btn btn-outline-dark btn-sm" disabled>
-      Add to Cart
-    </button>
+    <form
+      method="POST"
+      action="/cart/add/<%= p.id %>"
+    >
+      <button class="btn btn-dark btn-sm w-100 mt-2">
+        Add to Cart
+      </button>
+    </form>
   </div>
 </div>
