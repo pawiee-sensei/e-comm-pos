@@ -8,9 +8,16 @@ router.get('/cart', (req, res) => {
   const cart = req.session.cart || {};
   const items = Object.values(cart);
 
+  const total = items.reduce(
+    (sum, i) => sum + i.price * i.qty,
+    0
+  );
+
   res.render('shop/cart', {
     title: 'Your Cart',
-    items
+    items,
+    total,
+    session: req.session
   });
 });
 
@@ -21,9 +28,7 @@ router.post('/cart/add/:id', async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) return res.redirect('/shop');
 
-  if (!req.session.cart) {
-    req.session.cart = {};
-  }
+  if (!req.session.cart) req.session.cart = {};
 
   const cart = req.session.cart;
 
@@ -43,6 +48,31 @@ router.post('/cart/add/:id', async (req, res) => {
 });
 
 /* =========================
+   UPDATE QTY
+========================= */
+router.post('/cart/update/:id', (req, res) => {
+  const { action } = req.body;
+  const cart = req.session.cart;
+
+  if (!cart || !cart[req.params.id]) {
+    return res.redirect('/cart');
+  }
+
+  if (action === 'inc') {
+    cart[req.params.id].qty += 1;
+  }
+
+  if (action === 'dec') {
+    cart[req.params.id].qty -= 1;
+    if (cart[req.params.id].qty <= 0) {
+      delete cart[req.params.id];
+    }
+  }
+
+  res.redirect('/cart');
+});
+
+/* =========================
    REMOVE ITEM
 ========================= */
 router.post('/cart/remove/:id', (req, res) => {
@@ -50,6 +80,30 @@ router.post('/cart/remove/:id', (req, res) => {
     delete req.session.cart[req.params.id];
   }
   res.redirect('/cart');
+});
+
+/* =========================
+   CHECKOUT PAGE
+========================= */
+router.get('/checkout', (req, res) => {
+  const cart = req.session.cart || {};
+  const items = Object.values(cart);
+
+  if (items.length === 0) {
+    return res.redirect('/shop');
+  }
+
+  const total = items.reduce(
+    (sum, i) => sum + i.price * i.qty,
+    0
+  );
+
+  res.render('shop/checkout', {
+    title: 'Checkout',
+    items,
+    total,
+    session: req.session
+  });
 });
 
 module.exports = router;
