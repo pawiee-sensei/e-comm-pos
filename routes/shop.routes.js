@@ -10,7 +10,8 @@ router.get('/shop', ctrl.index);
 /* =========================
    CHECKOUT (LOCKED)
 ========================= */
-router.get('/shop/checkout', ensureAuthenticated, ctrl.checkout);
+router.get('/shop/checkout', ctrl.checkout);
+
 router.post('/shop/checkout/update', ensureAuthenticated, ctrl.updateCart);
 
 module.exports = router;

@@ -48,24 +48,30 @@ router.post('/cart/add/:id', async (req, res) => {
 });
 
 /* =========================
-   UPDATE QTY
+   INCREASE QTY
 ========================= */
-router.post('/cart/update/:id', (req, res) => {
-  const { action } = req.body;
+router.post('/cart/increase', (req, res) => {
+  const { id } = req.body;
   const cart = req.session.cart;
 
-  if (!cart || !cart[req.params.id]) {
-    return res.redirect('/cart');
+  if (cart && cart[id]) {
+    cart[id].qty += 1;
   }
 
-  if (action === 'inc') {
-    cart[req.params.id].qty += 1;
-  }
+  res.redirect('/cart');
+});
 
-  if (action === 'dec') {
-    cart[req.params.id].qty -= 1;
-    if (cart[req.params.id].qty <= 0) {
-      delete cart[req.params.id];
+/* =========================
+   DECREASE QTY
+========================= */
+router.post('/cart/decrease', (req, res) => {
+  const { id } = req.body;
+  const cart = req.session.cart;
+
+  if (cart && cart[id]) {
+    cart[id].qty -= 1;
+    if (cart[id].qty <= 0) {
+      delete cart[id];
     }
   }
 
@@ -75,17 +81,36 @@ router.post('/cart/update/:id', (req, res) => {
 /* =========================
    REMOVE ITEM
 ========================= */
-router.post('/cart/remove/:id', (req, res) => {
-  if (req.session.cart) {
-    delete req.session.cart[req.params.id];
+router.post('/cart/remove', (req, res) => {
+  const { id } = req.body;
+
+  if (req.session.cart && req.session.cart[id]) {
+    delete req.session.cart[id];
   }
+
   res.redirect('/cart');
 });
 
 /* =========================
-   CHECKOUT PAGE
+   CHECKOUT GATE (CRITICAL)
+========================= */
+router.post('/cart/checkout', (req, res) => {
+  if (!req.session.user) {
+    req.session.checkoutBlocked = true;
+    return res.redirect('/cart');
+  }
+
+  res.redirect('/shop/checkout');
+});
+
+/* =========================
+   CHECKOUT PAGE (GET)
 ========================= */
 router.get('/checkout', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/cart');
+  }
+
   const cart = req.session.cart || {};
   const items = Object.values(cart);
 

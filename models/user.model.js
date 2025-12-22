@@ -1,13 +1,21 @@
 const db = require('../config/db');
 
-async function findByEmail(email) {
-  const [rows] = await db.execute(
-    'SELECT * FROM users WHERE email = ? LIMIT 1',
-    [email]
-  );
-  return rows[0];
-}
+const TABLE = 'users';
 
 module.exports = {
-  findByEmail
+  async findByEmail(email) {
+    const [[row]] = await db.execute(
+      `SELECT * FROM ${TABLE} WHERE email = ? LIMIT 1`,
+      [email]
+    );
+    return row;
+  },
+
+  async create({ name, email, password }) {
+    const [res] = await db.execute(
+      `INSERT INTO ${TABLE} (name, email, password) VALUES (?, ?, ?)`,
+      [name, email, password]
+    );
+    return res.insertId;
+  }
 };

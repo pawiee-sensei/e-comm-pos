@@ -6,10 +6,23 @@
     <h4 class="mb-4">Your Cart</h4>
 
     ${
+      session && session.checkoutBlocked
+        ? `
+        <div class="alert alert-warning d-flex justify-content-between align-items-center">
+          <span>You must be logged in to checkout.</span>
+          <div>
+            <a href="/signup" class="btn btn-sm btn-dark">Sign up</a>
+            <a href="/user/login" class="btn btn-sm btn-outline-dark">Login</a>
+          </div>
+        </div>
+        `
+        : ``
+    }
+
+    ${
       items.length === 0
         ? `<p class="text-muted">Your cart is empty.</p>`
         : `
-        <!-- CART ITEMS -->
         <div class="cart-list">
 
           ${items.map(item => `
@@ -26,24 +39,29 @@
                 <div class="text-muted">₱${item.price}</div>
 
                 <div class="d-flex align-items-center gap-2 mt-2">
-                  <form method="POST" action="/cart/decrease/${item.id}">
-                    <button class="btn btn-sm btn-outline-secondary">−</button>
+
+                  <form method="POST" action="/cart/decrease">
+                    <input type="hidden" name="id" value="${item.id}">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">−</button>
                   </form>
 
                   <span>${item.qty}</span>
 
-                  <form method="POST" action="/cart/increase/${item.id}">
-                    <button class="btn btn-sm btn-outline-secondary">+</button>
+                  <form method="POST" action="/cart/increase">
+                    <input type="hidden" name="id" value="${item.id}">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
                   </form>
+
                 </div>
               </div>
 
               <div class="fw-semibold">
-                ₱${item.total}
+                ₱${item.price * item.qty}
               </div>
 
-              <form method="POST" action="/cart/remove/${item.id}">
-                <button class="btn btn-sm btn-outline-danger">
+              <form method="POST" action="/cart/remove">
+                <input type="hidden" name="id" value="${item.id}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">
                   Remove
                 </button>
               </form>
@@ -65,9 +83,12 @@
             Continue Shopping
           </a>
 
-          <a href="/shop/checkout" class="btn btn-dark">
-            Proceed to Checkout
-          </a>
+          <!-- ✅ POST checkout gate -->
+          <form method="POST" action="/cart/checkout">
+            <button type="submit" class="btn btn-dark">
+              Proceed to Checkout
+            </button>
+          </form>
         </div>
         `
     }
